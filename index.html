@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Website</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome</h1>
+    <p>Please choose one of the options below:</p>
+    <div id="initial-options">
+        <button onclick="chooseOption('Option 1')">Option 1</button>
+        <button onclick="chooseOption('Option 2')">Option 2</button>
+        <button onclick="chooseOption('Option 3')">Option 3</button>
+    </div>
+    <div id="follow-up-options" style="display: none;">
+        <p>You chose <span id="selected-option"></span>. Now pick a follow-up:</p>
+        <button onclick="chooseFollowUp('Follow-Up A')">Follow-Up A</button>
+        <button onclick="chooseFollowUp('Follow-Up B')">Follow-Up B</button>
+    </div>
+    <p id="confirmation" style="display: none;">Thank you for your choices!</p>
+
+    <script>
+        let userChoice = {};
+
+        function chooseOption(option) {
+            userChoice.mainOption = option;
+            document.getElementById('initial-options').style.display = 'none';
+            document.getElementById('follow-up-options').style.display = 'block';
+            document.getElementById('selected-option').innerText = option;
+        }
+
+        function chooseFollowUp(followUp) {
+            userChoice.followUp = followUp;
+
+            // Send data to the backend
+            fetch('/save-choice', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userChoice)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('follow-up-options').style.display = 'none';
+                document.getElementById('confirmation').style.display = 'block';
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
